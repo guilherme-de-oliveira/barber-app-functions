@@ -1,8 +1,6 @@
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
-// const Role = db.role;
-
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
@@ -21,32 +19,22 @@ exports.signup = (req, res) => {
       return;
     }
 
-    Role.findOne({ name: "user" }, (err, role) => {
+    user.save(err => {
       if (err) {
         res.status(500).send({ message: err });
         return;
       }
 
-      user.roles = [role._id];
-      user.save(err => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        res.send({ message: "User was registered successfully!" });
-      });
+      res.send({ message: "User was registered successfully!" });
     });
   });
 };
 
 exports.signin = (req, res) => {
-  console.log('Signin init')
   User.findOne({
     email: req.body.email,
     role: req.body.loginType
   })
-    // .populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
         console.log(err)
@@ -54,8 +42,7 @@ exports.signin = (req, res) => {
         return;
       
       }
-      console.log(req.body)
-      console.log(user)
+
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }

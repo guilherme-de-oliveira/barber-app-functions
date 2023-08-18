@@ -4,6 +4,13 @@ const barberController = require("../controllers/barber.controller");
 
 module.exports = function (app) {
     app.use(function (req, res, next) {
+        res.set('Access-Control-Allow-Origin', '*');
+
+          // Send response to OPTIONS requests
+          res.set('Access-Control-Allow-Methods', 'GET');
+          res.set('Access-Control-Allow-Headers', 'Content-Type');
+          res.set('Access-Control-Max-Age', '3600');
+        
         res.header(
             "Access-Control-Allow-Headers",
             "x-access-token, Origin, Content-Type, Accept"
@@ -11,42 +18,13 @@ module.exports = function (app) {
         next();
     });
 
-    app.get("/api/test", [authJwt.verifyToken], async(req, res) => {
-        console.log(req.query);
-        console.log('testestsettes goliva: ');
-        res.status(200).send('testtttt');
-    });
-
     app.get("/api/user", async(req, res) => {
-        console.log(req.query);
-        console.log('sera?');
         const response = await userController.getByName(req.query.barber);
-        console.log('response: ');
-        console.log(response);
         res.status(200).send(response);
     });
 
     app.get("/api/barber", [authJwt.verifyToken], async(req, res) => {
-        console.log(req.query);
         const response = await barberController.getByEmail(req.query.email);
-        console.log('response: ');
-        console.log(response);
         res.status(200).send(response);
     });
-
-    // app.put("/api/barber", [authJwt.verifyToken], async(req, res) => {
-    //     console.log('PUTT');
-    //     console.log(req.query);
-    //     // const response = await barberController.getByEmail(req.query.email);
-    //     console.log('response: ');
-    //     // console.log(response);
-    //     res.status(200).send(response);
-    // });
-
-
-    // app.get(
-    //     "/api/admin",
-    //     [authJwt.verifyToken, authJwt.isAdmin],
-    //     controller.adminBoard
-    // );
 };
